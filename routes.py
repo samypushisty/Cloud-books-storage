@@ -1,3 +1,4 @@
+from auth.hash_password import hash_password
 from models.models import Users
 from datafunctions import naive_utcnow
 from sqlalchemy import create_engine, insert
@@ -22,6 +23,7 @@ def registration(user: User):
     with Session(autoflush=False, bind=engine) as db:
         user = user.dict()
         user["registered_at"] = naive_utcnow()
+        user["password"] = hash_password(user["password"])
         stmt = insert(Users).values(**user)
         db.execute(stmt)
         db.commit()

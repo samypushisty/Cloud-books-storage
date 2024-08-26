@@ -38,7 +38,7 @@ metadata = MetaData()
 # )
 
 
-class roles(Base):
+class Roles(Base):
     __tablename__ = "roles"
 
     id = Column(Integer, primary_key=True)
@@ -46,7 +46,7 @@ class roles(Base):
     permissions = Column(JSON)
 
 
-class users(Base):
+class Users(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True)

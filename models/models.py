@@ -55,3 +55,19 @@ class Users(Base):
     password = Column(String, nullable=False)
     registered_at = Column(TIMESTAMP, default=naive_utcnow())
     role_id = Column(Integer, ForeignKey("roles.id"))
+
+
+class Books(Base):
+    __tablename__ = "books"
+
+    id = Column(Integer, primary_key=True)
+    title = Column(String, nullable=False, unique=True)
+    description = Column(String, nullable=False)
+
+
+class UsersToBooks(Base):
+    __tablename__ = "userstobooks"
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    book_id = Column(Integer, ForeignKey("books.id"))

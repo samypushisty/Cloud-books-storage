@@ -1,11 +1,13 @@
 
 
 from fastapi import FastAPI
-from routes import router
+from authroutes import authrouter
+from interfacerouts import interfacerouter
 
 app = FastAPI(
     title="Trading App"
 )
 
 
-app.include_router(router)
+app.include_router(authrouter)
+app.include_router(interfacerouter)

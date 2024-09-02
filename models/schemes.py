@@ -11,3 +11,9 @@ class User(BaseModel):
 class UserSignIn(BaseModel):
     email: str
     password: str
+
+
+class AddBook(BaseModel):
+    title: str
+    description: str
+

@@ -9,6 +9,19 @@ from models.schemes import AddBook
 
 
 
+id_book_base = []
+
+def reload_book_bd_id():
+    with Session(autoflush=False, bind=engine) as db:
+        try:
+            query = select(Books.id)
+            result = db.execute(query)
+            global id_book_base
+            id_book_base = [row[0] for row in result]
+            print(id_book_base)
+        except:
+            pass
+
 
 
 DATABASE_URL = f"postgresql+psycopg2://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
@@ -32,6 +45,7 @@ def addbook(book: AddBook, jwt: str):
                 stmt = insert(Books).values(**book)
                 db.execute(stmt)
                 db.commit()
+                reload_book_bd_id()
             except:
                 return HTTPException(status_code=500, detail="book is be")
     else:
@@ -64,9 +78,17 @@ def page_with_books(page: int, jwt: str):
     if valid_info["value"] is True:
         with Session(autoflush=False, bind=engine) as db:
             try:
-                query = select(Books).filter(page*3-3 < Books.id).filter(Books.id <= page*3)
-                print(query)
-                return db.execute(query).scalars().all()
+                if page*3-3 < len(id_book_base):
+                    if page*3 < len(id_book_base):
+                        first_id = page*3-3
+                        last_id = page*3-1
+                    else:
+                        first_id = page * 3 - 3
+                        last_id = len(id_book_base)-1
+                    query = select(Books).filter(id_book_base[first_id] <= Books.id).filter(Books.id <= id_book_base[last_id])
+                    result = db.execute(query)
+                    return [{key: value for key, value in zip(['title', 'id'], [row[0].title, row[0].id])} for row in result]
+
             except:
                 return HTTPException(status_code=500, detail="books is none")
     else:
